@@ -3,7 +3,7 @@
  * Ian C.
  */
 void kmain(void) {
-  const char *str = "Minxing's Kernel";
+  const char *str = "Kernel version 0.0.1 Minxing first kernel";
   char *vidptr = (char*) 0xb8000; //beginning of video mem
   unsigned int i = 0;
   unsigned int j = 0;
@@ -22,8 +22,8 @@ void kmain(void) {
   /* this loop writes the string to video memory
    */
   while(str[j] != '\0'){
-    vidptr[i] = str[i];
-    vidptr[i+1] = 0x07;
+    vidptr[i] = str[j];
+    vidptr[i+1] = 0x00 + (i) % 15 + 1;
     ++j;
     i = i + 2;
   }

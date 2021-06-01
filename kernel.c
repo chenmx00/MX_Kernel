@@ -2,7 +2,7 @@
  * kernel.c
  * Ian C.
  */
-void main(void) {
+void kmain(void) {
   const char *str = "Minxing's Kernel";
   char *vidptr = (char*) 0xb8000; //beginning of video mem
   unsigned int i = 0;

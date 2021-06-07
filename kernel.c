@@ -3,6 +3,7 @@
  * Ian C.
  * 06/06/2021
  */
+#include "keyboard_map.h";
 #define LINES 25
 #define COLUMNS_IN_LINE 80
 #define BYTES_FOR_EACH_ELEMENT 2
@@ -80,9 +81,44 @@ void idt_init(void){
 
     /* fill the IDT descriptor */
     idt_address = (unsigned long) IDT;
+    idt_ptr[0] = (sizeof (struct IDT_entry) * IDT_SIZE) + ((idt_address & 0xffff) << 16); //lower 16 bits
+    idt_ptr[1] = idt_address >> 16; // higher 16 bits
+    load_idt(idt_ptr);
 }
 
+void kb_init(void){
+  /*0xFD is 11111101 - enables IRQ1(the keyboard)*/
+  write_port(0x21, 0xFD);
+}
 
+void kprint_newline(void){
+  unsigned int line_size = BYTES_FOR_EACH_ELEMENT * COLUMNS_IN_LINE;
+  current_loc += line_size - (current_loc % line_size);
+}
+
+void clear_screen(void){
+  unsigned int i = 0;
+  while(i < SCREENSIZE){
+    vidptr[i++] = ' ';
+    vidptr[i++] = 0x07;
+  }
+}
+
+void keyboard_handler_main(void){
+  unsigned char status;
+  char keycode;
+  write_port(0x20, 0x20); //write EOF into PIC's command port to initiate
+  status = read_port(KEYBOARD_STATUS_PORT); //Lowest bit of status will be set if buffer is not empty
+  if (status & 0x01){
+    keycode = read_port(KEYBOARD_DATA_PORT);
+    if (keycode < 0){
+      return;
+    } else {
+      vidptr[current_loc++] = keyboard_map[keycode];
+      vidptr[current_loc++] = 0x07;
+    }
+  }
+}
 
 
 void kmain(void) {
@@ -119,5 +155,8 @@ void kmain(void) {
     ++j;
     i = i + 2;
   }
-  return;
+  kprint_newline();
+  idt_init();
+  kb_init();
+  while(1);
 }

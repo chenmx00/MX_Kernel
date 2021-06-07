@@ -14,7 +14,7 @@ global start
 global keyboard_handler
 global read_port
 global write_port
-global load_init
+global load_idt
 
 
 extern kmain  ;kmain is defined in the c file

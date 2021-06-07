@@ -3,7 +3,7 @@
  * Ian C.
  * 06/06/2021
  */
-#include "keyboard_map.h";
+#include "keyboard_map.h"
 #define LINES 25
 #define COLUMNS_IN_LINE 80
 #define BYTES_FOR_EACH_ELEMENT 2

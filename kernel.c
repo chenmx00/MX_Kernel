@@ -15,6 +15,7 @@
 #define INTERRUPT_GATE 0x8e
 #define KERNEL_CODE_SEGMENT_OFFSET 0x08
 #define ENTRY_KEY_CODE 0x1C
+#define EMPTY_LINES_TOP 8
 
 extern unsigned char keyboard_map[128];
 extern void keyboard_handler(void);
@@ -120,6 +121,12 @@ void keyboard_handler_main(void){
   }
 }
 
+void kprint_empty_lines(int line_count){
+  for (int i = 0; i < line_count; i ++){
+    kprint_newline();
+  }
+  return;
+}
 
 void kmain(void) {
   const char *str1 = "Kernel version 0.0.1";
@@ -155,7 +162,8 @@ void kmain(void) {
     ++j;
     i = i + 2;
   }
-  kprint_newline();
+
+  kprint_empty_lines(EMPTY_LINES_TOP);  
   idt_init();
   kb_init();
   while(1);

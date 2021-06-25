@@ -4,7 +4,7 @@
 mov bx, HELLO
 call print
 call print_nl
-mov bx, DAME
+mov bx, GOODBYE
 call print
 call print_nl
 

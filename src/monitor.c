@@ -30,8 +30,47 @@ static void scroll(){
         for (i = 24 * 80; i < 25*80; i++){
             video_memory[i] = blank;
         }
-
         cursor_y = 24;
     } 
+}
+
+//Write a single character to the screen.
+void monitor_put(char c){
+    // The background color is black(0), the foreground is white(15)
+    u8int backColor = 0;
+    u8int foreColor = 15;
+
+    //The attribute byte is made up of two nibbles - The lower being the 
+    //foreground color, and the upper the background color. 
+    u8int attributeByte = (backColor << 4) || (foreColor & 0x0F);
+    u16int attribute = attributeByte << 8;
+    u16int *location;
+
+    //handle a backspace, by moving the cursor back one space.
+    if (c == 0x08 && cursor_x){
+        cursor_x --;
+    }
+
+    //handle a tab by increasing the cursor's X, but only to a point where it is divisible by 8.
+    if (c == 0x09 && cursor_x){
+        cursor_x = (cursor_x + 8) & ~ (8 - 1);
+    }
+
+    //handle carriage return
+    else if (c == '\r'){
+        cursor_x = 0;
+    }
+
+    //handle newline by moving cursor back to left and increasing the row.
+    else if (c == '\n'){
+        cursor_x = 0;
+        cursor_y ++;
+    }
+
+    
+
+    
+
+
 }
 

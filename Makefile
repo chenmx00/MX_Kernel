@@ -1,5 +1,5 @@
 CC = i386-elf-gcc
-SOURCES=./src/boot.o ./src/kmain.o
+SOURCES=./src/boot.o ./src/kmain.o ./src/monitor.o ./src/common.o
 CFLAGS=-m32
 LDFLAGS=-m elf_i386 -T ./src/Link.ld
 ASFLAGS=-f elf32

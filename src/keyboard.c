@@ -60,6 +60,8 @@ static void kb_init(void){
 void keyboard_init(){
     idt_init();
     kb_init();
+    
+    
 }
 
 void keyboard_handler_main(void){

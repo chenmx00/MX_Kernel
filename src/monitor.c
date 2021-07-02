@@ -66,8 +66,7 @@ void monitor_put(char c){
 
     //handle newline by moving cursor back to left and increasing the row.
     else if (c == '\n'){
-        cursor_x = 0;
-        cursor_y ++;
+        entry_output();
     }
 
     else if(c >= ' '){
@@ -104,6 +103,18 @@ void monitor_write(char *c){
     while (c[i]){
         monitor_put(c[i++]);
     }
+}
+
+//Outputs an entry point for the shell.
+void entry_output(){
+    newline_add();
+    monitor_put('>');
+}
+
+//handle newline by moving cursor back to left and increasing the row.
+void newline_add(){
+    cursor_x = 0;
+    cursor_y ++;
 }
 
 

@@ -4,14 +4,14 @@
  * 06/06/2021
  */
 #include "monitor.h"
-
+#include "keyboard.h"
 void kmain(void) {
-  char *str1 = "Kernel version 0.0.1\n";
-  char *str2 = "Minxing's first kernel";
+  char *kernel_version = "Kernel version 0.0.3\n";
+  char *kernel_intro = "Minxing's first kernel\n\n";
 
   monitor_clear();
-  monitor_write(str1);
-  monitor_write(str2);
-  
+  monitor_write(kernel_version);
+  monitor_write(kernel_intro);
+  keyboard_init();
   while(1);
 }

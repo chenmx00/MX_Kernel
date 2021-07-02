@@ -6,7 +6,7 @@
 //write a byte to a specified port.
 void out_byte(u16int port, u8int value)
 {
-    asm volatile("outb %1, $0" : : "dN" (port), "a" (value));
+    asm volatile("outb %1, %0" : : "dN" (port), "a" (value));
 }
 
 u8int in_byte(u16int port){

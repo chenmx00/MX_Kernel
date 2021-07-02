@@ -44,10 +44,13 @@ void monitor_put(char c){
     //foreground color, and the upper the background color. 
     u8int attributeByte = (backColor << 4) | (foreColor & 0x0F);
     u16int attribute = attributeByte << 8;
+    u16int blank = 0x20 | (attributeByte << 8); //Writing the space character into the rightmost 8 bits.
     u16int *location;
 
     //handle a backspace, by moving the cursor back one space.
     if (c == 0x08 && cursor_x){
+        location = video_memory + (cursor_y * 80 + cursor_x-1);
+        *location = blank;
         cursor_x --;
     }
 

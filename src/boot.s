@@ -45,12 +45,12 @@ gdt_flush:
   mov eax, [esp + 4] ;Get the pointer of GDT, passed as parameter.
   lgdt [eax] ;Call instruction lgdt to load the GDT pointer.
   mov ax, 0x10 ;0x10 is the offset in GDT to data segment
-  mov ds, ax
+  mov ds, ax ; Flush 0x10 into all segment registers (exclude cs)
   mov es, ax
   mov fs, ax
   mov gs, ax
   mov ss, ax
-  jmp 0x08:.flush
+  jmp 0x08:.flush ;Perform far jump into eip(.flush) and set offset(cs) to 0x08
 .flush:
   ret
 

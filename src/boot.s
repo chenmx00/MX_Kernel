@@ -11,14 +11,11 @@ section .text
         dd - (0x1BADB002 + 0x00) ;checksum
 
 global start
-global keyboard_handler
 global read_port
 global write_port
-global load_idt
-global gdt_flush
+
 
 extern kmain  ;kmain is defined in the c file
-extern keyboard_handler_main ; keyboard handler is definred in the c file for convinience.
 
 read_port:
   mov edx, [esp + 4] ;Read 4 bytes in memory starting at current stack pointer + 4 bytes (next address, which is the first parameter)
@@ -29,29 +26,6 @@ write_port:
   mov edx, [esp + 4] ;Loads the first param(port number) into edx
   mov al, [esp + 4 + 4] ;Loads the second param(actual data) into eax(lower 8 bits)
   out dx, al ;Loads al(actual data) into dx(port number)
-  ret
-
-load_idt:
-  mov edx, [esp + 4] ;Loads the first param (idt_ptr)
-  lidt [edx] ;Load idt
-  sti ;Turns on interruption
-  ret
-
-keyboard_handler:
-  call keyboard_handler_main
-  iretd
-
-gdt_flush:
-  mov eax, [esp + 4] ;Get the pointer of GDT, passed as parameter.
-  lgdt [eax] ;Call instruction lgdt to load the GDT pointer.
-  mov ax, 0x10 ;0x10 is the offset in GDT to data segment
-  mov ds, ax ; Flush 0x10 into all segment registers (exclude cs)
-  mov es, ax
-  mov fs, ax
-  mov gs, ax
-  mov ss, ax
-  jmp 0x08:.flush ;Perform far jump into eip(.flush) and set offset(cs) to 0x08
-.flush:
   ret
 
 

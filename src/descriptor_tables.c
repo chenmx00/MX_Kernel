@@ -2,7 +2,6 @@
 //Ian C.
 #include "common.h"
 #include "descriptor_tables.h"
-
 //access the asm function from the C code.
 extern void gdt_flush(u32int);
 extern void idt_flush(u32int);
@@ -11,6 +10,8 @@ static void init_gdt();
 static void init_idt();
 static void gdt_set_gates(s32int, u32int, u32int, u8int, u8int);
 static void idt_set_gates(u8int, u32int, u16int, u8int);
+static u32int fetch_isr(u8int num);
+void * memset (void *dest, int val, u32int len);
 
 gdt_entry_t gdt_entries[GDT_SIZE];
 idt_entry_t idt_entires[IDT_SIZE];
@@ -20,7 +21,7 @@ idt_ptr_t idt_ptr;
 //Initialize all descriptor tables.
 void init_descriptor_tables(){
     init_gdt();
-    inti_idt();
+    init_idt();
 }
 
 //Initialize GDT.
@@ -38,11 +39,11 @@ static void init_gdt(){
 
 //Initialize IDT.
 static void init_idt(){
-    idt_ptr.base = (u32int) & idt_entires;
+    idt_ptr.base = (u32int) &idt_entires;
     idt_ptr.limit = (sizeof(idt_entry_t) * 256) - 1;
-    memset(&idt_entires, 0, sizeof(idt_entires) * 256); //Initialize IDT entries.
+    memset(&idt_entires, 0, sizeof(idt_entry_t) * 256); //Initialize IDT entries.
     for (int i = 0; i < 32; i++){
-        idt_set_gates(i, fetch_isr(i), 0x08, 0x8E);
+        idt_set_gates(i, (u32int)fetch_isr(i), 0x08, 0x8E);
     }
     idt_flush((u32int)&idt_ptr);
 }
@@ -68,38 +69,46 @@ static void idt_set_gates(u8int num, u32int base, u16int selector, u8int attribu
 
 static u32int fetch_isr(u8int num){
     u32int isr_table[32];
-    isr_table[0] = isr0;
-    isr_table[1] = isr1;
-    isr_table[2] = isr2;
-    isr_table[3] = isr3;
-    isr_table[4] = isr4;
-    isr_table[5] = isr5;
-    isr_table[6] = isr6;
-    isr_table[7] = isr7;
-    isr_table[8] = isr8;
-    isr_table[9] = isr9;
-    isr_table[10] = isr10;
-    isr_table[11] = isr11;
-    isr_table[12] = isr12;
-    isr_table[13] = isr13;
-    isr_table[14] = isr14;
-    isr_table[15] = isr15;
-    isr_table[16] = isr16;
-    isr_table[17] = isr17;
-    isr_table[18] = isr18;
-    isr_table[19] = isr19;
-    isr_table[20] = isr20;
-    isr_table[21] = isr21;
-    isr_table[22] = isr22;
-    isr_table[23] = isr23;
-    isr_table[24] = isr24;
-    isr_table[25] = isr25;
-    isr_table[26] = isr26;
-    isr_table[27] = isr27;
-    isr_table[28] = isr28;
-    isr_table[29] = isr29;
-    isr_table[30] = isr30;
-    isr_table[31] = isr31;
+    isr_table[0] = (u32int)isr0;
+    isr_table[1] = (u32int)isr1;
+    isr_table[2] = (u32int)isr2;
+    isr_table[3] = (u32int)isr3;
+    isr_table[4] = (u32int)isr4;
+    isr_table[5] = (u32int)isr5;
+    isr_table[6] = (u32int)isr6;
+    isr_table[7] = (u32int)isr7;
+    isr_table[8] = (u32int)isr8;
+    isr_table[9] = (u32int)isr9;
+    isr_table[10] = (u32int)isr10;
+    isr_table[11] = (u32int)isr11;
+    isr_table[12] = (u32int)isr12;
+    isr_table[13] = (u32int)isr13;
+    isr_table[14] = (u32int)isr14;
+    isr_table[15] = (u32int)isr15;
+    isr_table[16] = (u32int)isr16;
+    isr_table[17] = (u32int)isr17;
+    isr_table[18] = (u32int)isr18;
+    isr_table[19] = (u32int)isr19;
+    isr_table[20] = (u32int)isr20;
+    isr_table[21] = (u32int)isr21;
+    isr_table[22] = (u32int)isr22;
+    isr_table[23] = (u32int)isr23;
+    isr_table[24] = (u32int)isr24;
+    isr_table[25] = (u32int)isr25;
+    isr_table[26] = (u32int)isr26;
+    isr_table[27] = (u32int)isr27;
+    isr_table[28] = (u32int)isr28;
+    isr_table[29] = (u32int)isr29;
+    isr_table[30] = (u32int)isr30;
+    isr_table[31] = (u32int)isr31;
     return isr_table[num];
+}
+
+void * memset (void *dest, int val, u32int len)
+{
+  unsigned char *ptr = dest;
+  while (len-- > 0)
+    *ptr++ = val;
+  return dest;
 }
 

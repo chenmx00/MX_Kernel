@@ -1,5 +1,5 @@
 ;descriptor_tables.s - contains setup code for global descriptor table and interrupt descriptor table.
-[global gdt_flush]
+[GLOBAL gdt_flush]
 gdt_flush:
   mov eax, [esp + 4] ;Get the pointer of GDT, passed as parameter.
   lgdt [eax] ;Call instruction lgdt to load the GDT pointer.
@@ -13,7 +13,7 @@ gdt_flush:
 .flush:
   ret
 
-[global idt_flush]
+[GLOBAL idt_flush]
 idt_flush:
   mov edx, [esp + 4] ;Loads the first param (idt_ptr)
   lidt [edx] ;Load idt

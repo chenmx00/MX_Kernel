@@ -16,6 +16,7 @@ void kmain(void) {
   monitor_write(kernel_intro);
   
   init_descriptor_tables();
+  keyboard_init();
   //asm volatile( "int $0x3");
   while(1);
 }

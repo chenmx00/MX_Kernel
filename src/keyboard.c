@@ -1,6 +1,7 @@
 #include "keyboard.h"
 #include "monitor.h"
 #include "keyboard_map.h"
+#include "isr.h"
 
 static void idt_init(void){
     unsigned long keyboard_address;
@@ -52,22 +53,17 @@ static void idt_init(void){
     load_idt(idt_ptr);
 }
 
-static void kb_init(void){
-  /*0xFD is 11111101 - enables IRQ1(the keyboard)*/
-  write_port(0x21, 0xFD);
-}
 
 void keyboard_init(){
-    idt_init();
-    kb_init();
-    
-    
+  /*0xFD is 11111101 - enables IRQ1(the keyboard)*/
+  write_port(0x21, 0xFD);
+  register_interrupt_handler(IRQ1,&keyboard_callback);
 }
 
-void keyboard_handler_main(void){
+void keyboard_callback(void){
   unsigned char status;
   char keycode;
-  write_port(0x20, 0x20); //write EOF into PIC's command port to initiate
+  //write_port(0x20, 0x20); //write EOF into PIC's command port to initiate
   status = read_port(KEYBOARD_STATUS_PORT); //Lowest bit of status will be set if buffer is not empty
   if (status & 0x01){
     keycode = read_port(KEYBOARD_DATA_PORT);

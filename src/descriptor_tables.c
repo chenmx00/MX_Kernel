@@ -43,16 +43,16 @@ static void init_idt(){
     idt_ptr.base = (u32int) &idt_entires;
     idt_ptr.limit = (sizeof(idt_entry_t) * 256) - 1;
     memset(&idt_entires, 0, sizeof(idt_entry_t) * 256); //Initialize IDT entries.
-    outb(0x20, 0x11); //ICW1 -- begins Initialize PICs, flush 0x11 to the command port to start PIC initialization.
-    outb(0xA0, 0x11); //ICW1 -- same process for PIC2.
-    outb(0x21, 0x20); //ICW2 -- Remap offset address of IDT. In x86 protected mode, we have to offset 0x20 because the first 32 interrupts are reserved for CPU exceptions.
-    outb(0xA1, 0X28); //ICW2 -- same process for PIC2.
-    outb(0x21, 0x04); //ICW3 -- Cascading mode enable, PIC1 for the master.
-    outb(0xA1, 0x02); //ICW3 -- Cascading mode enable, PIC2 for the slavery.
-    outb(0x21, 0x01); //ICW4 -- Environment info, set the last bit to tell PIC we are running on 80x86 mode.
-    outb(0xA1, 0x01); //ICW4 -- same process for PIC2.
-    outb(0x21, 0xff); //Mask(disable) interrupts for PIC1.
-    outb(0xA1, 0xff); //Mask(disable) interrupts for PIC2.
+    out_byte(0x20, 0x11); //ICW1 -- begins Initialize PICs, flush 0x11 to the command port to start PIC initialization.
+    out_byte(0xA0, 0x11); //ICW1 -- same process for PIC2.
+    out_byte(0x21, 0x20); //ICW2 -- Remap offset address of IDT. In x86 protected mode, we have to offset 0x20 because the first 32 interrupts are reserved for CPU exceptions.
+    out_byte(0xA1, 0X28); //ICW2 -- same process for PIC2.
+    out_byte(0x21, 0x04); //ICW3 -- Cascading mode enable, PIC1 for the master.
+    out_byte(0xA1, 0x02); //ICW3 -- Cascading mode enable, PIC2 for the slavery.
+    out_byte(0x21, 0x01); //ICW4 -- Environment info, set the last bit to tell PIC we are running on 80x86 mode.
+    out_byte(0xA1, 0x01); //ICW4 -- same process for PIC2.
+    out_byte(0x21, 0xFF); //Mask(Enable) interrupts for PIC1.
+    out_byte(0xA1, 0xFF); //Mask(Enable) interrupts for PIC2.
 
     for (int i = 0; i < 32; i++){
         idt_set_gates(i, (u32int)fetch_isr(i), 0x08, 0x8E);

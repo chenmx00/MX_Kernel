@@ -1,34 +1,37 @@
 # MX Kernel
 
+### Features
+
+- Grub and Multiboot bootloader supported.
+- Complete support for 5 entries GDT(null, kernel code, kernel data, user code, user data) on x86.
+- Complete support for 256 entries IDT(32 system interrupts and 16 PIC interrupts) on x86.
+
 ### Kernel Build
 
-- Linux
+- Clean the build files first.
 
-  ```shell
-  nasm -f elf32 kernel.asm -o out/kasm.o && gcc -m32 -c kernel.c -o out/kc.o && ld -m elf_i386 -T link.ld -o kernel out/kasm.o out/kc.o
+  ```makefile
+  make clean
   ```
 
-- MacOS
+- If using MacOS, install cross-build i386-elf toolchain first.
 
-  First Install Cross i386-ELF toolchain.
-
-  ```shell
+  ```bash
   brew tap nativeos/i386-elf-toolchain 
   brew install i386-elf-binutils i386-elf-gcc
   ```
 
-  ``
-  Simply Run Make to build the kernel.
-  ``
-  ```shell
+- If using MacOS, simply run Make
+
+  ```makefile
   make
   ```
 
-  ```shell
-  nasm -f elf32 kernel.asm -o out/kasm.o && i386-elf-gcc -m32 -c kernel.c -o out/kc.o && i386-elf-ld -m elf_i386 -T link.ld -o kernel out/kasm.o out/kc.o
-  ```
+- If using Linux, manually build and link as follow:
 
-  
+  ```shell
+  nasm -f elf32 kernel.asm -o out/kasm.o && gcc -m32 -c kernel.c -o out/kc.o && ld -m elf_i386 -T link.ld -o kernel out/kasm.o out/kc.o
+  ```
 
 ### Run Kernel in QEMU
 

@@ -25,21 +25,15 @@
   brew install i386-elf-binutils i386-elf-gcc
   ```
 
-- If using MacOS, simply run Make
+- Then, simply run Make
 
   ```makefile
   make
   ```
 
-- If using Linux, manually build and link as follow:
-
-  ```shell
-  nasm -f elf32 kernel.asm -o out/kasm.o && gcc -m32 -c kernel.c -o out/kc.o && ld -m elf_i386 -T link.ld -o kernel out/kasm.o out/kc.o
-  ```
-
 ### Run Kernel in QEMU
 
 ```shell
-qemu-system-i386 -kernel kernel
+qemu-system-x86_64 -kernel kernel
 ```
 

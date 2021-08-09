@@ -1,5 +1,5 @@
 CC = i386-elf-gcc
-SOURCES=./src/boot.o ./src/monitor.o ./src/common.o  ./src/kmain.o ./src/descriptor_tables.o ./src/descriptor_tables_asm.o ./src/isr.o ./src/interrupt.o ./src/keyboard.o
+SOURCES=./src/boot.o ./src/monitor.o ./src/common.o  ./src/kmain.o ./src/descriptor_tables.o ./src/descriptor_tables_asm.o ./src/isr.o ./src/interrupt.o ./src/keyboard.o ./src/timer.o
 CFLAGS=-m32
 LDFLAGS=-m elf_i386 -T ./src/Link.ld
 ASFLAGS=-f elf32

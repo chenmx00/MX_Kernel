@@ -51,8 +51,8 @@ static void init_idt(){
     out_byte(0xA1, 0x02); //ICW3 -- Cascading mode enable, PIC2 for the slavery.
     out_byte(0x21, 0x01); //ICW4 -- Environment info, set the last bit to tell PIC we are running on 80x86 mode.
     out_byte(0xA1, 0x01); //ICW4 -- same process for PIC2.
-    out_byte(0x21, 0xFF); //Mask(Enable) interrupts for PIC1.
-    out_byte(0xA1, 0xFF); //Mask(Enable) interrupts for PIC2.
+    out_byte(0x21, 0x00); //Mask(Enable) interrupts for PIC1.
+    out_byte(0xA1, 0x00); //Mask(Enable) interrupts for PIC2.
 
     for (int i = 0; i < 32; i++){
         idt_set_gates(i, (u32int)fetch_isr(i), 0x08, 0x8E);

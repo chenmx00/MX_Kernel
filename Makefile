@@ -1,9 +1,9 @@
 UNAME := $(shell uname)
-ifeq ($(uname), Linux)
+ifeq ($(uname), Linux )
 CC = gcc
 SOURCES=./src/boot.o ./src/monitor.o ./src/common.o  ./src/kmain.o ./src/descriptor_tables.o ./src/descriptor_tables_asm.o ./src/isr.o ./src/interrupt.o ./src/keyboard.o ./src/timer.o
 CFLAGS=-m32
-LDFLAGS=-m elf_i386 -T ./src/Link.ld
+LDFLAGS=-m elf_i386 -T ./src/link.ld
 ASFLAGS=-f elf32
 
 all: $(SOURCES) link
@@ -18,7 +18,7 @@ else
 CC = i386-elf-gcc
 SOURCES=./src/boot.o ./src/monitor.o ./src/common.o  ./src/kmain.o ./src/descriptor_tables.o ./src/descriptor_tables_asm.o ./src/isr.o ./src/interrupt.o ./src/keyboard.o ./src/timer.o
 CFLAGS=-m32
-LDFLAGS=-m elf_i386 -T ./src/Link.ld
+LDFLAGS=-m elf_i386 -T ./src/link.ld
 ASFLAGS=-f elf32
 
 all: $(SOURCES) link

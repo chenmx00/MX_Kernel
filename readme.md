@@ -8,7 +8,7 @@
 
 - Complete support for 256 entries IDT(32 system interrupts and 16 PIC interrupts) on x86.
 
-  ![](/Users/minxingchen/Developer/MX_Kernel/img/version 0.05.png)
+  ![](https://github.com/chenmx00/MX_Kernel/blob/master/img/version%200.05.png)
 
 ### Kernel Build
 

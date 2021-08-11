@@ -2,7 +2,7 @@ UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)
 CC = gcc
 SOURCES=./src/boot.o ./src/monitor.o ./src/common.o  ./src/kmain.o ./src/descriptor_tables.o ./src/descriptor_tables_asm.o ./src/isr.o ./src/interrupt.o ./src/keyboard.o ./src/timer.o
-CFLAGS=-m32 -nostdlib -nostdinc -fno-builtin - fno-stack-protector
+CFLAGS=-m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector
 LDFLAGS=-m elf_i386 -T ./src/link.ld
 ASFLAGS=-f elf32
 

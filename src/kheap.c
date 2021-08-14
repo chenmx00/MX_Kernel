@@ -40,4 +40,3 @@ u32int kmalloc(u32int size){
     return start;
 }
 
-

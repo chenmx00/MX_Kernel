@@ -38,5 +38,6 @@ u32int kmalloc(u32int size){
     u32int start = placement_address;
     placement_address += size;
     return start;
-
 }
+
+

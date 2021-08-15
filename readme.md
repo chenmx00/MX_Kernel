@@ -8,6 +8,17 @@
 
 - Complete support for 256 entries IDT(32 system interrupts and 16 PIC interrupts) on x86.
 
+- Complete support for Modern Keyboards input.
+
+- Complete support for 4096 bytes paging, dynamical memory management with heap.
+
+- Modern file system(VFS) and initrd is implemented.
+
+- Useful shell to interact with the system.
+
+
+
+
   ![](https://github.com/chenmx00/MX_Kernel/blob/master/img/version%200.05.png)
 
 ### Kernel Build

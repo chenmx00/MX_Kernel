@@ -10,4 +10,7 @@ ordered_array_t create_ordered_array(s32int max_size, lessthan_predicate_t lesst
     ret.array = (void*) kmalloc(max_size * sizeof(type_t));
     memset(ret.array, 0, max_size * sizeof(type_t));
     ret.size = 0;
+    ret.max_size = max_size;
+    ret.lessthan = lessthan;
+    return ret;
 }

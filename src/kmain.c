@@ -26,7 +26,6 @@ void kmain(void) {
   monitor_write("-Ready To Use\r");
 
   //init_timer(50);
-
   //asm volatile( "int $0x5");
   //asm volatile( "int $0x6");
   //asm volatile ("sti");

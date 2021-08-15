@@ -1,6 +1,5 @@
 #ifndef PAGING_H
 #define PAGING_N
-#endif
 #include "common.h" 
 #include "isr.h"
 
@@ -29,4 +28,6 @@ void switch_page_directory(page_directory_t *new_pg);
 void initialize_paging();
 page_t *get_page(u32int address, int make, page_directory_t *dir);
 void page_fault_callback(registers_t regs);
+#endif
+
 

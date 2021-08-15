@@ -9,27 +9,28 @@
 #include "timer.h"
 #include "paging.h"
 void kmain(void) {
-  char *kernel_version = "Kernel version 0.05";
-  char *kernel_intro = "Minxing's kernel\n";
 
   monitor_clear();
-  monitor_write(kernel_version);
-  newline_add();
-  monitor_write(kernel_intro);
-  
+  monitor_write("Kernel version 0.07\n");
+  monitor_write("Minxing's kernel\n");
+  monitor_write("-Initializing Global Descriptor Table...\n");
+  monitor_write("-Initializing Interrupt Descriptor Table...\n");
   init_descriptor_tables();
+  monitor_write("-Done Initializing\n");
+  monitor_write("-Initializing Keyboards...\n");
   keyboard_init();
+  monitor_write("-Done Initializing\n");
+  monitor_write("-Initializing Segmentation and Paging...\n");
+  initialize_paging();
+  monitor_write("-Done Initializing\n");
+  monitor_write("-Ready To Use\r");
+
   //init_timer(50);
 
-  asm volatile( "int $0x5");
-  asm volatile( "int $0x6");
-  asm volatile ("sti");
-  initialize_paging();
-  u32int *ptr = (u32int*)0x0000FFFF;
-  *ptr = 20;
-  u32int do_page_fault = *ptr;
-  monitor_write_dec(do_page_fault);
-  //init_timer(50);
+  //asm volatile( "int $0x5");
+  //asm volatile( "int $0x6");
+  //asm volatile ("sti");
+
 
 
   while(1);

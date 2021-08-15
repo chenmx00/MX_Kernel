@@ -61,12 +61,12 @@ void monitor_put(char c){
 
     //handle carriage return
     else if (c == '\r'){
-        cursor_x = 0;
+        entry_output();
     }
 
     //handle newline by moving cursor back to left and increasing the row.
     else if (c == '\n'){
-        entry_output();
+        newline_add();
     }
 
     else if(c >= ' '){

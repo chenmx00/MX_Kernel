@@ -15,4 +15,5 @@ typedef char s8int;
 void out_byte(u16int port, u8int value);
 u8int in_byte(u16int port);
 u16int in_word(u16int port);
+void * memset (void *dest, int val, u32int len);
 #endif

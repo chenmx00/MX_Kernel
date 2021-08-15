@@ -12,7 +12,6 @@ static void gdt_set_gates(s32int, u32int, u32int, u8int, u8int);
 static void idt_set_gates(u8int, u32int, u16int, u8int);
 static u32int fetch_isr(u8int num);
 static u32int fetch_irq(u8int num);
-void * memset (void *dest, int val, u32int len);
 
 gdt_entry_t gdt_entries[GDT_SIZE];
 idt_entry_t idt_entires[IDT_SIZE];
@@ -140,11 +139,5 @@ static u32int fetch_irq(u8int num){
     return irq_table[num];
 }
 
-void * memset (void *dest, int val, u32int len)
-{
-  unsigned char *ptr = dest;
-  while (len-- > 0)
-    *ptr++ = val;
-  return dest;
-}
+
 

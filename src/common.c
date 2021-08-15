@@ -20,3 +20,11 @@ u16int in_word(u16int port){
     asm volatile("inw %1, %0" : "=a" (ret) : "dN" (port));
     return ret;
 }
+
+void * memset (void *dest, int val, u32int len)
+{
+  unsigned char *ptr = dest;
+  while (len-- > 0)
+    *ptr++ = val;
+  return dest;
+}

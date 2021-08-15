@@ -22,5 +22,19 @@ typedef struct{
     header_t *header;
 }footer_t;
 
+typedef struct {
+    ordered_array_t index;
+    u32int start_address;
+    u32int end_address;
+    u32int max_address;
+    u8int supervisor;
+    u8int readonly;
+}heap_t;
+
+heap_t *create_heap(u32int start, u32int end, u32int max, u8int supervisor, u8int readonly);
+void *alloc(u32int size, u8int page_align, heap_t *heap);
+void free(void *p, heap_t *heap);
+
+
 
 

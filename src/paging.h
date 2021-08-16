@@ -25,8 +25,7 @@ typedef struct page_directory{
 }page_directory_t;
 
 
-page_directory_t *kernel_directory;
-page_directory_t *current_directory;
+
 void alloc_frame(page_t *page, int is_kernel, int is_writable);
 void free_frame(page_t *page);
 void switch_page_directory(page_directory_t *new_pg);

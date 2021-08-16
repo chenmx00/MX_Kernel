@@ -68,7 +68,7 @@ static s8int header_t_less_than(void* a, void* b){
 heap_t *create_heap(u32int start, u32int end, u32int max, u8int supervisor, u8int readonly){
     heap_t *heap = (heap_t*) kmalloc(sizeof(header_t));
     if ((start & 0x1000 != 0) || (end & 0x1000 != 0)){
-        return;
+        return 0;
     }
     heap->index = place_ordered_array((void *)start, HEAP_INDEX_SIZE, &header_t_less_than);
     start += sizeof(type_t) * HEAP_INDEX_SIZE;
@@ -104,8 +104,20 @@ void expand(heap_t * heap, u32int new_size){
     heap->end_address = heap->start_address + new_size;
 }
 
-void contract(){
-
+static s32int contract(heap_t * heap, u32int new_size){
+    if (new_size > heap->end_address - heap->start_address)
+        return -1; //sanity check
+    if (new_size & 0x1000)
+        new_size = (new_size & 0x1000) + 0x1000; //page align
+    if (new_size <  HEAP_MIN_SIZE)
+        return -1; //sanity check
+    u32int i = heap->end_address - heap->start_address - 0x1000;
+    while(new_size < i){
+        free_frame(get_page(heap->start_address+i, 0, kernel_directory));
+        i -= 0x1000;
+    }
+    heap->end_address = heap->start_address + new_size;
+    return new_size;
 }
 
 

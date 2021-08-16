@@ -7,9 +7,8 @@
 u32int *frames;
 u32int nframes;
 extern u32int placement_address;
-
-page_directory_t *kernel_directory;
-page_directory_t *current_directory;
+current_directory = 0;
+kernel_directory = 0;
 
 static void set_frame(u32int frame_address){
     u32int frame = frame_address/0x1000; // total 2^32 / 4096 = 1048576 frames

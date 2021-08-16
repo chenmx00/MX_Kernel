@@ -1,7 +1,9 @@
 //kheap.c - Implement
 #include "common.h" 
 #include "kheap.h"
+#include "paging.h"
 extern u32int end;
+extern page_directory_t *kernel_directory;
 u32int placement_address = (u32int) &end;
 static u32int kmalloc_helper(u32int size, int align, u32int *phys){
     if(align && (placement_address & 0xFFFFF000)){
@@ -70,9 +72,8 @@ heap_t *create_heap(u32int start, u32int end, u32int max, u8int supervisor, u8in
     }
     heap->index = place_ordered_array((void *)start, HEAP_INDEX_SIZE, &header_t_less_than);
     start += sizeof(type_t) * HEAP_INDEX_SIZE;
-    if((start  & 0xFFFFF000) != 0) {
-        start += 0x1000 - (start % 0x1000); //question mark 
-    }
+    if((start  & 0xFFFFF000) != 0) 
+        start = (start & 0xFFFFF000) + 0x1000; //page_align
     heap->start_address = start;
     heap->end_address = end;
     heap->max_address = max;
@@ -85,6 +86,26 @@ heap_t *create_heap(u32int start, u32int end, u32int max, u8int supervisor, u8in
     hole->is_hole = 1;
     insert_ordered_array((type_t) hole, &heap->index);
     return heap;
+}
+
+void expand(heap_t * heap, u32int new_size){
+    if (new_size < heap->end_address - heap->start_address)
+        return; //sanity check
+    if (new_size & 0xFFFFF000 != 0)
+        new_size = (new_size & 0xFFFFF000) + 0x1000; //page align
+    if (heap->start_address + new_size > heap->max_address)
+        return; //sanity check
+    u32int i = heap->end_address - heap->start_address; //old size
+    while (i < new_size)
+    {
+        alloc_frame(get_page(heap->start_address+i, 1, kernel_directory), (heap->supervisor) ? 1 : 0, (heap->readonly) ? 0 : 1);
+        i += 0x1000;
+    }
+    heap->end_address = heap->start_address + new_size;
+}
+
+void contract(){
+
 }
 
 

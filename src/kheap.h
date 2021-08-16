@@ -1,6 +1,7 @@
 //kheap.h - Declares interfaces for kernel space allocation.
 //Ian C.
 #include "common.h"
+#include "ordered_array.h"
 #define KHEAP_START 0XC0000000
 #define HEAP_INITIAL_SIZE 0X100000
 #define HEAP_INDEX_SIZE 0X20000

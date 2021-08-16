@@ -59,6 +59,34 @@ static s32int find_smallest_hole(u32int size, u8int page_align, heap_t *heap){
     }
 }
 
+static s8int header_t_less_than(void* a, void* b){
+    return (((header_t *)a)->size < ((header_t *)b)->size) ? 1 : 0;
+}
+
+heap_t *create_heap(u32int start, u32int end, u32int max, u8int supervisor, u8int readonly){
+    heap_t *heap = (heap_t*) kmalloc(sizeof(header_t));
+    if ((start & 0x1000 != 0) || (end & 0x1000 != 0)){
+        return;
+    }
+    heap->index = place_ordered_array((void *)start, HEAP_INDEX_SIZE, &header_t_less_than);
+    start += sizeof(type_t) * HEAP_INDEX_SIZE;
+    if((start  & 0xFFFFF000) != 0) {
+        start += 0x1000 - (start % 0x1000); //question mark 
+    }
+    heap->start_address = start;
+    heap->end_address = end;
+    heap->max_address = max;
+    heap->supervisor = supervisor;
+    heap->readonly = readonly;
+
+    header_t * hole = (header_t *) start;
+    hole->size = end - start;
+    hole->magic = HEAP_MAGIC;
+    hole->is_hole = 1;
+    insert_ordered_array((type_t) hole, &heap->index);
+    return heap;
+}
+
 
 
 

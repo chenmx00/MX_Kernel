@@ -120,6 +120,27 @@ static s32int contract(heap_t * heap, u32int new_size){
     return new_size;
 }
 
+void *alloc(u32int size, u8int page_align, heap_t* heap){
+    u32int total_request_size = size + sizeof(header_t) + sizeof(footer_t);
+    s32int iterator = find_smallest_hole(size, page_align, heap);
+    if (iterator == -1) //make a new hole
+    {
+        
+    }
+    header_t *og_hole_header = (header_t *) lookup_ordered_array((u32int) iterator, &heap->index);
+    s32int og_hole_size = og_hole_header->size;
+    if ((og_hole_size - total_request_size) < (sizeof(header_t) + sizeof(footer_t))){
+        size += og_hole_size - total_request_size;
+        total_request_size = og_hole_size;
+    }
+    
+
+
+
+    
+}
+
+
 
 
 

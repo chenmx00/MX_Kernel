@@ -128,12 +128,22 @@ void *alloc(u32int size, u8int page_align, heap_t* heap){
         
     }
     header_t *og_hole_header = (header_t *) lookup_ordered_array((u32int) iterator, &heap->index);
+    u32int og_hole_pos = (u32int) og_hole_header;
     s32int og_hole_size = og_hole_header->size;
     if ((og_hole_size - total_request_size) < (sizeof(header_t) + sizeof(footer_t))){
         size += og_hole_size - total_request_size;
         total_request_size = og_hole_size;
     }
-    
+    if(page_align && og_hole_pos & 0xFFFFF000){
+       u32int new_pos = og_hole_pos + 0x1000 -(og_hole_pos) & 0xFFF - sizeof(header_t);
+       header_t *hole_header = (header_t*) og_hole_header;
+       hole_header->is_hole = 1;
+       hole_header->magic = HEAP_MAGIC;
+       hole_header->size = 0x1000;
+       footer_t *hole_footer = (footer_t*) ((u32int)new_pos - sizeof(footer_t));
+    }
+
+
 
 
 

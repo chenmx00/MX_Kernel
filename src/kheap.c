@@ -125,7 +125,26 @@ void *alloc(u32int size, u8int page_align, heap_t* heap){
     s32int iterator = find_smallest_hole(size, page_align, heap);
     if (iterator == -1) //make a new hole
     {
-        
+        u32int old_length = heap->end_address - heap->start_address;
+        u32int old_end_address = heap->end_address;
+        expand(heap, old_length + total_request_size);
+        u32int new_length = heap->end_address - heap->start_address;
+        iterator = 0;
+        u32int idx = -1;
+        u32int value = 0;
+        while (iterator < heap->index.size){
+            u32int tmp = (u32int)lookup_ordered_array(iterator, &heap->index);
+            if (tmp > value){
+                tmp = value;
+                idx = iterator;
+            } 
+            iterator++;
+        }
+        if (idx == -1){ //need to make a new header
+        header_t* hole_header = (header_t*) old_end_address;
+
+        }
+
     }
     header_t *og_hole_header = (header_t *) lookup_ordered_array((u32int) iterator, &heap->index);
     u32int og_hole_pos = (u32int) og_hole_header;

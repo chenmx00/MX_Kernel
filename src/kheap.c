@@ -237,6 +237,9 @@ u8int free(void* p, heap_t* heap){
     }
     if((u32int)footer+sizeof(footer_t) == heap->end_address){
         u32int old_length = heap->end_address - heap->start_address;
+        u32int new_length = contract(heap, (u32int)header - heap->start_address);
+        
+        if (header->size - old_length)
     }
 }   
 

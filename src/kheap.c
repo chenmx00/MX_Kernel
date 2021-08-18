@@ -238,8 +238,14 @@ u8int free(void* p, heap_t* heap){
     if((u32int)footer+sizeof(footer_t) == heap->end_address){
         u32int old_length = heap->end_address - heap->start_address;
         u32int new_length = contract(heap, (u32int)header - heap->start_address);
-        
-        if (header->size - old_length)
+        if (header->size - (old_length - new_length) > 0){ //the hole still exists after contracting, it just gets smaller
+            header->size = old_length - new_length;
+            footer = (footer_t *) ((u32int)header + header->size - sizeof(footer_t));
+            footer->magic = HEAP_MAGIC;
+            footer->header = header;
+        } else { //the hole is gone
+            
+        }
     }
 }   
 

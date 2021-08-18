@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "keyboard.h": "c",
+        "common.h": "c",
+        "isr.h": "c"
+    },
+    "editor.fontFamily": "dejavu sans mono",
+    "terminal.integrated.cursorStyle": "underline",
+    "terminal.integrated.fontFamily": "monospace",
+    "editor.cursorStyle": "underline",
+    "editor.codeLensFontFamily": "dejavu sans mono"
+}

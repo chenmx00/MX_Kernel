@@ -235,6 +235,9 @@ u8int free(void* p, heap_t* heap){
             return -1; //sanity check
         remove_ordered_array(iterator, &heap->index); 
     }
+    if((u32int)footer+sizeof(footer_t) == heap->end_address){
+        u32int old_length = heap->end_address - heap->start_address;
+    }
 }   
 
 

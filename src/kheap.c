@@ -251,6 +251,8 @@ u8int free(void* p, heap_t* heap){
                 remove_ordered_array(iterator, &heap->index);
         }
     }
+    if (do_add)
+        insert_ordered_array((void*) header, &heap->index);
 }   
 
 

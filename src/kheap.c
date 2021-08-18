@@ -145,10 +145,21 @@ void *alloc(u32int size, u8int page_align, heap_t* heap){
         hole_header->magic = HEAP_MAGIC;
         hole_header->is_hole = 1;
         hole_header->size = new_length - old_length;
-        footer_t hole_footer = (footer_t*) (old_end_address + hole_header->size - sizeof(footer_t));
-
+        footer_t* hole_footer = (footer_t*) (old_end_address + hole_header->size - sizeof(footer_t));
+        hole_footer->header = hole_header;
+        hole_footer->magic = HEAP_MAGIC;
+        insert_ordered_array((void *)hole_header, &heap->index);
         }
-
+        else {
+            header_t* hole_header = lookup_ordered_array(idx, &heap->index);
+            hole_header->is_hole = 1;
+            hole_header->magic = HEAP_MAGIC;
+            hole_header->size += new_length - old_length;
+            footer_t* hole_footer = (footer_t *)((u32int)hole_header + hole_header->size - sizeof(footer_t));
+            hole_footer->header = hole_header;
+            hole_footer->magic = HEAP_MAGIC;
+        }
+        return alloc(size, page_align, heap);
     }
     header_t *og_hole_header = (header_t *) lookup_ordered_array((u32int) iterator, &heap->index);
     u32int og_hole_pos = (u32int) og_hole_header;
@@ -193,17 +204,6 @@ void *alloc(u32int size, u8int page_align, heap_t* heap){
         insert_ordered_array(hole_header, &heap->index);
     }
     return (void*)((u32int)block_header+sizeof(header_t));
-    
-
-
-
-
-
-
-
-
-
-    
 }
 
 

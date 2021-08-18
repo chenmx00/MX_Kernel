@@ -152,9 +152,25 @@ void *alloc(u32int size, u8int page_align, heap_t* heap){
     block_header->magic = HEAP_MAGIC;
     block_header->is_hole = 0;
     block_header->size = total_request_size;
-    footer_t *block_footer = (footer_t *)og_hole_pos + block_header->size + sizeof(block_header);
+    footer_t *block_footer = (footer_t *)og_hole_pos + size + sizeof(block_header);
     block_footer->header = block_header;
     block_footer->magic = HEAP_MAGIC;
+
+    if (og_hole_size - total_request_size > 0) //why not count for overheads -- cuz if the overhead is greater than this must equates to false
+    {
+        header_t* hole_header = (header_t*) og_hole_pos + sizeof(size) + sizeof(header_t) + sizeof(footer_t);
+        hole_header->magic = HEAP_MAGIC;
+        hole_header->is_hole = 1;
+        hole_header->size = og_hole_size - total_request_size;
+        footer_t* hole_footer = (footer_t*) (u32int)hole_header + hole_header->size - sizeof(footer_t);
+        if((u32int) hole_footer < heap->end_address){
+            hole_footer->magic = HEAP_MAGIC;
+            hole_footer->header = hole_header;
+        }
+        insert_ordered_array(hole_header, &heap->index);
+    }
+    return (void*)((u32int)block_header+sizeof(header_t));
+    
 
 
 

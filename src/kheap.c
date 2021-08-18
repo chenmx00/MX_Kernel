@@ -142,6 +142,10 @@ void *alloc(u32int size, u8int page_align, heap_t* heap){
         }
         if (idx == -1){ //need to make a new header
         header_t* hole_header = (header_t*) old_end_address;
+        hole_header->magic = HEAP_MAGIC;
+        hole_header->is_hole = 1;
+        hole_header->size = new_length - old_length;
+        footer_t hole_footer = (footer_t*) (old_end_address + hole_header->size - sizeof(footer_t));
 
         }
 

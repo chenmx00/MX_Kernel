@@ -5,6 +5,8 @@
 extern u32int end;
 extern page_directory_t *kernel_directory;
 u32int placement_address = (u32int) &end;
+heap_t *kheap = 0;
+
 static u32int kmalloc_helper(u32int size, int align, u32int *phys){
     if(align && (placement_address & 0xFFFFF000)){
         placement_address &= 0xFFFFF000;

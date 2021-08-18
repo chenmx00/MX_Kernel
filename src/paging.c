@@ -81,14 +81,20 @@ void initialize_paging(){
     kernel_directory = (page_directory_t*) kmalloc_aligned(sizeof(page_directory_t));
     memset(kernel_directory, 0, sizeof(page_directory_t));
     current_directory = kernel_directory;
-    int i = 0;
+    int i = 0; //assign page fot heap region first
+    for (i = HEAP_START; i < HEAP_START + HEAP_INITIAL_SIZE; i += 0x1000)
+        get_page(i, 1, kernel_directory);
+    i = 0; //then assign page form 0 to placement_address
     while (i < placement_address)
     {
         alloc_frame(get_page(i, 1, kernel_directory), 0, 0); //kernel code is readable but not writable from users space
         i += 0x1000;
     }
+    for(i = HEAP_START; i < HEAP_START + HEAP_INITIAL_SIZE; i += 0x1000)
+        alloc_frame(get_page(i, 1, kernel_directory), 0, 0);
     register_interrupt_handler(14, &page_fault_callback); //register the interrupt handler
     switch_page_directory(kernel_directory); //Enable Paging
+    kheap = create_heap(HEAP_START, HEAP_START + HEAP_INITIAL_SIZE, 0xCFFFF000, 0 , 0);
 }
 
 void switch_page_directory(page_directory_t *dir){

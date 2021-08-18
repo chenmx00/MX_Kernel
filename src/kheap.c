@@ -150,6 +150,7 @@ void *alloc(u32int size, u8int page_align, heap_t* heap){
     }
     header_t *block_header  = (header_t *)og_hole_header;
     block_header->magic = HEAP_MAGIC;
+    block_header->is_hole = 0;
 
 
 

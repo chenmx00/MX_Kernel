@@ -135,7 +135,7 @@ void *alloc(u32int size, u8int page_align, heap_t* heap){
         while (iterator < heap->index.size){
             u32int tmp = (u32int)lookup_ordered_array(iterator, &heap->index);
             if (tmp > value){
-                tmp = value;
+                value = tmp;
                 idx = iterator;
             } 
             iterator++;
@@ -206,6 +206,15 @@ void *alloc(u32int size, u8int page_align, heap_t* heap){
     return (void*)((u32int)block_header+sizeof(header_t));
 }
 
+u8int free(void* p, heap_t* heap){
+    if (p == 0)
+        return;
+    header_t* header = (header_t*) ((u32int)p - sizeof(header_t));
+    footer_t* footer = (footer_t*) ((u32int)header + header->size - sizeof(footer_t));
+    if (header->magic){
+
+    }
+}   
 
 
 

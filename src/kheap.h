@@ -34,7 +34,7 @@ typedef struct {
 
 heap_t *create_heap(u32int start, u32int end, u32int max, u8int supervisor, u8int readonly);
 void *alloc(u32int size, u8int page_align, heap_t *heap);
-void free(void *p, heap_t *heap);
+u8int free(void *p, heap_t *heap);
 
 
 

@@ -244,7 +244,11 @@ u8int free(void* p, heap_t* heap){
             footer->magic = HEAP_MAGIC;
             footer->header = header;
         } else { //the hole is gone
-            
+            u32int iterator = 0;
+            while((iterator < heap->index.size) && (lookup_ordered_array(iterator, &heap->index) != (void*)header_potential))
+                iterator++;
+            if (iterator < heap->index.size)
+                remove_ordered_array(iterator, &heap->index);
         }
     }
 }   

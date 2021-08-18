@@ -7,6 +7,7 @@
 u32int *frames;
 u32int nframes;
 extern u32int placement_address;
+extern heap_t* kheap;
 page_directory_t* current_directory = 0;
 page_directory_t* kernel_directory = 0;
 

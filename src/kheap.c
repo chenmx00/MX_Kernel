@@ -141,7 +141,12 @@ void *alloc(u32int size, u8int page_align, heap_t* heap){
        hole_header->magic = HEAP_MAGIC;
        hole_header->size = 0x1000;
        footer_t *hole_footer = (footer_t*) ((u32int)new_pos - sizeof(footer_t));
+       hole_footer->magic = HEAP_MAGIC;
+       hole_footer->header = hole_header;
+
     }
+
+
 
 
 

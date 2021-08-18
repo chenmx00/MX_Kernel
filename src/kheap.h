@@ -11,6 +11,7 @@ u32int kmalloc(u32int size);
 u32int kmalloc_aligned(u32int size);
 u32int kmalloc_physical(u32int size, u32int *phys);
 u32int kmalloc_aligned_physical(u32int size, u32int *phys);
+u8int kfree(void *p);
 
 typedef struct {
     u32int magic;

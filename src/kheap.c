@@ -8,16 +8,25 @@ u32int placement_address = (u32int) &end;
 heap_t *kheap = 0;
 
 static u32int kmalloc_helper(u32int size, int align, u32int *phys){
-    if(align && (placement_address & 0xFFFFF000)){
-        placement_address &= 0xFFFFF000;
-        placement_address += 0x1000;
+    if (kheap){
+         void* address = alloc(size, (u8int)align, kheap);
+         if (phys){
+            page_t* page = get_page((u32int)address, 0, kernel_directory);
+           *phys = page->frame*0x1000 + (u32int)address & 0xFFF;
+         }
+         return (u32int)address;
+    } else {
+        if(align && (placement_address & 0xFFFFF000)){
+            placement_address &= 0xFFFFF000;
+            placement_address += 0x1000;
+        }
+        if(phys){
+            *phys = placement_address;
+        }
+        u32int start = placement_address;
+        placement_address += size;
+        return start;
     }
-    if(phys){
-        *phys = placement_address;
-    }
-    u32int start = placement_address;
-    placement_address += size;
-    return start;
 }
 
 u32int kmalloc(u32int size){
@@ -34,6 +43,10 @@ u32int kmalloc_physical(u32int size, u32int *phys){
 
 u32int kmalloc_aligned_physical(u32int size, u32int *phys){
     return kmalloc_helper(size, 1, phys);
+}
+
+u8int kfree(void* p){
+    return free(p, kheap);
 }
 
 static s32int find_smallest_hole(u32int size, u8int page_align, heap_t *heap){

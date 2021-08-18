@@ -85,7 +85,7 @@ void initialize_paging(){
     for (i = HEAP_START; i < HEAP_START + HEAP_INITIAL_SIZE; i += 0x1000)
         get_page(i, 1, kernel_directory);
     i = 0; //then assign page form 0 to placement_address
-    while (i < placement_address)
+    while (i < placement_address + 0x1000)
     {
         alloc_frame(get_page(i, 1, kernel_directory), 0, 0); //kernel code is readable but not writable from users space
         i += 0x1000;

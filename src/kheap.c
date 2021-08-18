@@ -148,9 +148,13 @@ void *alloc(u32int size, u8int page_align, heap_t* heap){
     } else {
         remove_ordered_array(iterator, &heap->index);
     }
-    header_t *block_header  = (header_t *)og_hole_header;
+    header_t *block_header  = (header_t *)og_hole_pos;
     block_header->magic = HEAP_MAGIC;
     block_header->is_hole = 0;
+    block_header->size = total_request_size;
+    footer_t *block_footer = (footer_t *)og_hole_pos + block_header->size + sizeof(block_header);
+    block_footer->header = block_header;
+    block_footer->magic = HEAP_MAGIC;
 
 
 

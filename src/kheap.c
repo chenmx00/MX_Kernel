@@ -145,9 +145,10 @@ void *alloc(u32int size, u8int page_align, heap_t* heap){
        hole_footer->header = hole_header;
        og_hole_pos = new_pos;
        og_hole_size = og_hole_size - hole_header->size;
-
-
+    } else {
+        remove_ordered_array(iterator, &heap->index);
     }
+
 
 
 

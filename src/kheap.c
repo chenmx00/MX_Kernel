@@ -208,11 +208,32 @@ void *alloc(u32int size, u8int page_align, heap_t* heap){
 
 u8int free(void* p, heap_t* heap){
     if (p == 0)
-        return;
+        return 0;
     header_t* header = (header_t*) ((u32int)p - sizeof(header_t));
     footer_t* footer = (footer_t*) ((u32int)header + header->size - sizeof(footer_t));
-    if (header->magic){
-
+    if (header->magic != HEAP_MAGIC || footer->magic != HEAP_MAGIC)
+        return -1; //sanity check
+    header->is_hole = 1;
+    u8int do_add = 1;
+    footer_t* footer_potential = (footer_t*) ((u32int)header - sizeof(footer_t));
+    if (footer_potential->magic == HEAP_MAGIC && footer_potential->header->is_hole == 1){ //unify left
+        u32int cache_size = header->size;
+        header = footer_potential->header;
+        footer->header = header;
+        header->size += cache_size;
+        do_add = 0;
+    }
+    header_t* header_potential = (header_t*) ((u32int)footer + sizeof(footer_t));
+    if(header_potential->magic == HEAP_MAGIC && header_potential->is_hole){
+        header->size += header_potential->size;
+        footer_potential = (footer_t *) ((u32int)header_potential + header_potential->size - sizeof(footer_t));
+        footer = footer_potential;
+        u32int iterator = 0;
+        while((iterator < heap->index.size) && (lookup_ordered_array(iterator, &heap->index) != (void*)header_potential))
+            iterator++;
+        if (iterator >= heap->index.size)
+            return -1; //sanity check
+        remove_ordered_array(iterator, &heap->index); 
     }
 }   
 

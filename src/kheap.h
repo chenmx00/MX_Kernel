@@ -17,12 +17,12 @@ typedef struct {
     u32int magic;
     u8int is_hole;
     u32int size;
-}header_t;
+}header_t; //12 bytes
 
 typedef struct{
     u32int magic;
     header_t *header;
-}footer_t;
+}footer_t; //8 bytes
 
 typedef struct {
     ordered_array_t index;

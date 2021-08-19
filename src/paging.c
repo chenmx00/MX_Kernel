@@ -6,7 +6,7 @@
 #define OFFSET_FROM_BIT(address) (address%(8*4))
 u32int *frames;
 u32int nframes;
-extern u32int placement_address;
+extern u32int placement_address; //0x10e00c
 extern heap_t* kheap;
 page_directory_t* current_directory = 0;
 page_directory_t* kernel_directory = 0;
@@ -95,6 +95,23 @@ void initialize_paging(){
     register_interrupt_handler(14, &page_fault_callback); //register the interrupt handler
     switch_page_directory(kernel_directory); //Enable Paging
     kheap = create_heap(HEAP_START, HEAP_START + HEAP_INITIAL_SIZE, 0xCFFFF000, 0 , 0);
+    if (kheap){
+        monitor_write("-Kernel Heap Initialization Success\n");
+        monitor_write("--Kernel Heap Starts At: ");
+        monitor_write_hex(kheap->start_address);
+        monitor_put('\n');
+        monitor_write("--Kernel Heap Ends At: ");
+        monitor_write_hex(kheap->end_address);
+        monitor_put('\n');
+        monitor_write("--Kernel Heap Max Address At: ");
+        monitor_write_hex(kheap->max_address);
+        monitor_put('\n');
+        monitor_write("--Kernel Heap Block Size: ");
+        monitor_write_dec(kheap->index.size);
+        monitor_put('\n');
+    } else {
+        monitor_write("-Kernel Heap Initialization Failed\n");
+    }
 }
 
 void switch_page_directory(page_directory_t *dir){
@@ -136,6 +153,6 @@ void page_fault_callback(registers_t regs){
     if(us){monitor_write("usermode ");}
     if(reserved){monitor_write("reserved ");}
     monitor_write(") at ");
-    monitor_write_dec(faulting_address);
+    monitor_write_hex(faulting_address);
     monitor_write("\n");
 }

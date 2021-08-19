@@ -2,6 +2,7 @@
 #include "common.h" 
 #include "kheap.h"
 #include "paging.h"
+#include "monitor.h"
 extern u32int end;
 extern page_directory_t *kernel_directory;
 u32int placement_address = (u32int) &end;
@@ -16,7 +17,7 @@ static u32int kmalloc_helper(u32int size, int align, u32int *phys){
          }
          return (u32int)address;
     } else {
-        if(align && (placement_address & 0xFFFFF000)){
+        if(align == 1 && (placement_address & 0xFFFFF000)){
             placement_address &= 0xFFFFF000;
             placement_address += 0x1000;
         }
@@ -81,14 +82,14 @@ static s8int header_t_less_than(void* a, void* b){
 }
 
 heap_t *create_heap(u32int start, u32int end, u32int max, u8int supervisor, u8int readonly){
-    heap_t *heap = (heap_t*) kmalloc(sizeof(header_t));
-    if ((start & 0x1000 != 0) || (end & 0x1000 != 0)){
+    heap_t *heap = (heap_t*) kmalloc(sizeof(heap_t));
+    if ((start % 0x1000 != 0) || (end % 0x1000 != 0)){
         return 0;
     }
     heap->index = place_ordered_array((void *)start, HEAP_INDEX_SIZE, &header_t_less_than);
     start += sizeof(type_t) * HEAP_INDEX_SIZE;
-    if((start  & 0xFFFFF000) != 0) 
-        start = (start & 0xFFFFF000) + 0x1000; //page_align
+    if(start & 0xFFFFF000 != 0) 
+        start = (start & 0xFFFFF000) + 0x1000; //page_align questions here! precedence might be wrong!
     heap->start_address = start;
     heap->end_address = end;
     heap->max_address = max;
@@ -125,7 +126,7 @@ static s32int contract(heap_t * heap, u32int new_size){
     if (new_size & 0x1000)
         new_size = (new_size & 0x1000) + 0x1000; //page align
     if (new_size <  HEAP_MIN_SIZE)
-        return -1; //sanity check
+        new_size = HEAP_MIN_SIZE;
     u32int i = heap->end_address - heap->start_address - 0x1000;
     while(new_size < i){
         free_frame(get_page(heap->start_address+i, 0, kernel_directory));
@@ -146,7 +147,7 @@ void *alloc(u32int size, u8int page_align, heap_t* heap){
         u32int new_length = heap->end_address - heap->start_address;
         iterator = 0;
         u32int idx = -1;
-        u32int value = 0;
+        u32int value = 0x0;
         while (iterator < heap->index.size){
             u32int tmp = (u32int)lookup_ordered_array(iterator, &heap->index);
             if (tmp > value){
@@ -156,16 +157,15 @@ void *alloc(u32int size, u8int page_align, heap_t* heap){
             iterator++;
         }
         if (idx == -1){ //need to make a new header
-        header_t* hole_header = (header_t*) old_end_address;
-        hole_header->magic = HEAP_MAGIC;
-        hole_header->is_hole = 1;
-        hole_header->size = new_length - old_length;
-        footer_t* hole_footer = (footer_t*) (old_end_address + hole_header->size - sizeof(footer_t));
-        hole_footer->header = hole_header;
-        hole_footer->magic = HEAP_MAGIC;
-        insert_ordered_array((void *)hole_header, &heap->index);
-        }
-        else {
+            header_t* hole_header = (header_t*) old_end_address;
+            hole_header->magic = HEAP_MAGIC;
+            hole_header->is_hole = 1;
+            hole_header->size = new_length - old_length;
+            footer_t* hole_footer = (footer_t*) (old_end_address + hole_header->size - sizeof(footer_t));
+            hole_footer->header = hole_header;
+            hole_footer->magic = HEAP_MAGIC;
+            insert_ordered_array((void *)hole_header, &heap->index);
+        } else {
             header_t* hole_header = lookup_ordered_array(idx, &heap->index);
             hole_header->is_hole = 1;
             hole_header->magic = HEAP_MAGIC;
@@ -179,12 +179,12 @@ void *alloc(u32int size, u8int page_align, heap_t* heap){
     header_t *og_hole_header = (header_t *) lookup_ordered_array((u32int) iterator, &heap->index);
     u32int og_hole_pos = (u32int) og_hole_header;
     s32int og_hole_size = og_hole_header->size;
-    if ((og_hole_size - total_request_size) < (sizeof(header_t) + sizeof(footer_t))){
+    if ((og_hole_size - total_request_size) < sizeof(header_t) + sizeof(footer_t)){
         size += og_hole_size - total_request_size;
         total_request_size = og_hole_size;
     }
     if(page_align && og_hole_pos & 0xFFFFF000){
-       u32int new_pos = og_hole_pos + 0x1000 -(og_hole_pos) & 0xFFF - sizeof(header_t);
+       u32int new_pos = og_hole_pos + 0x1000 -(og_hole_pos & 0xFFF) - sizeof(header_t);
        header_t *hole_header = (header_t*) og_hole_header;
        hole_header->is_hole = 1;
        hole_header->magic = HEAP_MAGIC;
@@ -201,17 +201,17 @@ void *alloc(u32int size, u8int page_align, heap_t* heap){
     block_header->magic = HEAP_MAGIC;
     block_header->is_hole = 0;
     block_header->size = total_request_size;
-    footer_t *block_footer = (footer_t *)og_hole_pos + size + sizeof(block_header);
+    footer_t *block_footer = (footer_t *)(og_hole_pos + size + sizeof(header_t));
     block_footer->header = block_header;
     block_footer->magic = HEAP_MAGIC;
 
     if (og_hole_size - total_request_size > 0) //why not count for overheads -- cuz if the overhead is greater than this must equates to false
     {
-        header_t* hole_header = (header_t*) og_hole_pos + sizeof(size) + sizeof(header_t) + sizeof(footer_t);
+        header_t* hole_header = (header_t*) (og_hole_pos + size + sizeof(header_t) + sizeof(footer_t));
         hole_header->magic = HEAP_MAGIC;
         hole_header->is_hole = 1;
         hole_header->size = og_hole_size - total_request_size;
-        footer_t* hole_footer = (footer_t*) (u32int)hole_header + hole_header->size - sizeof(footer_t);
+        footer_t* hole_footer = (footer_t*) ((u32int)hole_header + hole_header->size - sizeof(footer_t));
         if((u32int) hole_footer < heap->end_address){
             hole_footer->magic = HEAP_MAGIC;
             hole_footer->header = hole_header;

@@ -12,12 +12,13 @@ SECTIONS
     }
   .data : {
     *(.data)
+    *(.rodate)
     . = ALIGN(4096);
      }
   .bss : {
     *(.bss) 
     . = ALIGN(4096);
     }
-  end = .;
+  end = .; _end = .; __end = .;
 }
 

@@ -19,7 +19,7 @@
 
 
 
-  ![](https://github.com/chenmx00/MX_Kernel/blob/master/img/version%200.05.png)
+  ![](https://github.com/chenmx00/MX_Kernel/blob/master/img/version%200.08.png)
 
 ### Kernel Build
 

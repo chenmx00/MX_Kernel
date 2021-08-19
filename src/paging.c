@@ -80,6 +80,7 @@ void initialize_paging(){
     memset(frames, 0, INDEX_FROM_BIT(nframes));
     kernel_directory = (page_directory_t*) kmalloc_aligned(sizeof(page_directory_t));
     memset(kernel_directory, 0, sizeof(page_directory_t));
+    kernel_directory->physicalAddress = (u32int) kernel_directory;
     current_directory = kernel_directory;
     int i = 0; //assign page fot heap region first
     for (i = HEAP_START; i < HEAP_START + HEAP_INITIAL_SIZE; i += 0x1000)
@@ -112,6 +113,30 @@ void initialize_paging(){
     } else {
         monitor_write("-Kernel Heap Initialization Failed\n");
     }
+    monitor_write("--Current Page Directory Is Located At: ");
+    monitor_write_hex(current_directory->physicalAddress);
+    monitor_put('\n');
+    
+    // for (int i = 0; i < 1024; i++)
+    // {
+    //     monitor_write("---Page table ");
+    //     monitor_write_dec(i);
+    //     monitor_put('\n');
+    //     page_table_t * table = current_directory->tables[i];
+    //     for (int j = 0; j < 1024; j++){
+    //         monitor_write("---Page ");
+    //         monitor_write_dec(j);
+    //         if(table->pages[j].present){
+    //             monitor_write(" Page Is Present Physcially At ");
+    //             monitor_write_hex(table->pages[j].frame);
+    //         } else {
+    //             monitor_write(" Page Is Not Present Physcially");
+    //         }
+    //         monitor_put('\n');
+    //     }
+    // }
+    
+
 }
 
 void switch_page_directory(page_directory_t *dir){

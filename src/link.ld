@@ -12,7 +12,7 @@ SECTIONS
     }
   .data : {
     *(.data)
-    *(.rodate)
+    *(.rodata)
     . = ALIGN(4096);
      }
   .bss : {

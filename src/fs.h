@@ -1,3 +1,5 @@
+#ifndef FS_H
+#define FS_H
 #include "common.h"
 #define FS_FILE 0X01
 #define FS_DIRECTORY 0X02
@@ -6,6 +8,7 @@
 #define FS_PIPE 0X05
 #define FS_SYMLINK 0X06
 #define FS_MOUNTPOINT 0X08
+struct fs_node;
 typedef u32int (*read_type_t) (struct fs_node*, u32int, u32int, u8int*);
 typedef u32int (*write_type_t) (struct fs_node*, u32int, u32int, u8int*);
 typedef void (*open_type_t) (struct fs_node*);
@@ -31,8 +34,8 @@ typedef struct fs_node{
 struct dirent{
     char name[128];
     u32int inode;
-}
-extern fs_node_t* fs_root;
+}; 
+extern fs_node_t *fs_root;
 
 u32int read_fs(fs_node_t* node, u32int offset, u32int size, u8int* buffer);
 u32int write_fs(fs_node_t* node, u32int offset, u32int size, u8int* buffer);
@@ -43,3 +46,5 @@ fs_node_t* finddir_fs(fs_node_t* node, char* name);
 
 
 
+
+#endif

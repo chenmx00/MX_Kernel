@@ -30,6 +30,7 @@ typedef struct fs_node{
     close_type_t close;
     readdir_type_t readdir;
     finddir_type_t finddir;
+    struct fs_node *ptr;
 } fs_node_t;
 struct dirent{
     char name[128];

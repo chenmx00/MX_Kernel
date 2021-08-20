@@ -15,5 +15,9 @@ typedef char s8int;
 void out_byte(u16int port, u8int value);
 u8int in_byte(u16int port);
 u16int in_word(u16int port);
-void * memset (void *dest, int val, u32int len);
+void* memset (void *dest, int val, u32int len);
+void* memcpy (void *dest, const void *src, u32int len);
+u32int strlen(const char *s);
+char *strcpy (char *dest, const char *src);
+int strcmp(const char *X, const char *Y);
 #endif

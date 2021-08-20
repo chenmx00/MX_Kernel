@@ -60,9 +60,10 @@ fs_node_t* initialize_initrd(u32int locaiton){
     initrd_dev->finddir = &initrd_finddir;
     root_nodes = (fs_node_t *) kmalloc(sizeof(fs_node_t) * initrd_header->file_quantity);
     file_quantity = initrd_header->file_quantity;
-    for(ini i = 0; i < initrd_header->file_quantity; i++){
+    for(int i = 0; i < initrd_header->file_quantity; i++){
         
     }
+    return initrd_root;
 }
 
 

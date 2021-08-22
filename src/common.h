@@ -20,4 +20,5 @@ void* memcpy (void *dest, const void *src, u32int len);
 u32int strlen(const char *s);
 char *strcpy (char *dest, const char *src);
 int strcmp(const char *X, const char *Y);
+char *strncpy(char *dest, const char *src, u32int n);
 #endif

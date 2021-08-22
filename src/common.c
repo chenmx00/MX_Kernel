@@ -65,4 +65,16 @@ int strcmp(const char *X, const char *Y)
     // return the ASCII difference after converting `char*` to `unsigned char*`
     return *(const unsigned char*)X - *(const unsigned char*)Y;
 }
+
+char *strncpy(char *dest, const char *src, u32int n)
+{
+    char *ret = dest;
+    do {
+        if (!n--)
+            return ret;
+    } while (*dest++ = *src++);
+    while (n--)
+        *dest++ = 0;
+    return ret;
+}
  

@@ -74,8 +74,9 @@ fs_node_t* initialize_initrd(u32int locaiton){
     file_quantity = initrd_header->file_quantity;
     for(int i = 0; i < initrd_header->file_quantity; i++){
         file_header[i].offset += locaiton;
-        strcpy(root_nodes[i].name, (char*)&file_header[i].name);
+        strcpy(root_nodes[i].name, &file_header[i].name);
         root_nodes[i].mask = root_nodes[i].gid = root_nodes[i].uid = 0;
+        root_nodes[i].length = file_header[i].length;
         root_nodes[i].inode = i;
         root_nodes[i].flags = FS_FILE;
         root_nodes[i].read = &initrd_read;

@@ -1,16 +1,16 @@
 #include "common.h"
 #include "initrd.h"
 #include "kheap.h"
-initrd_file_header_t* file_header;
+initrd_file_header_t* file_headers;
 initrd_header_t* initrd_header;
 fs_node_t* initrd_root;
 fs_node_t* initrd_dev;
 fs_node_t* root_nodes;
-u32int file_quantity;
+u32int nodes_quantity;
 struct dirent dirent;
 
 static u32int initrd_read(fs_node_t* node, u32int offset, u32int size, u8int* buffer){
-    initrd_file_header_t header = file_header[node->inode];
+    initrd_file_header_t header = file_headers[node->inode];
     if (offset > header.length)
         return 0;
     if (offset + size > header.length)
@@ -21,12 +21,12 @@ static u32int initrd_read(fs_node_t* node, u32int offset, u32int size, u8int* bu
 static struct dirent* initrd_readdir(fs_node_t* node, u32int index){
     if (node == initrd_root && index == 0){
         strcpy(dirent.name, "dev");
-        dirent.name[3];
+        dirent.name[3] = 0;
         dirent.inode = 0;
         return &dirent;
     }
 
-    if (index-1 >= file_quantity)
+    if (index-1 >= nodes_quantity)
         return 0;
     strcpy(dirent.name, root_nodes[index - 1].name);
     dirent.name[strlen(root_nodes[index - 1].name)] = 0;
@@ -36,7 +36,7 @@ static struct dirent* initrd_readdir(fs_node_t* node, u32int index){
 static fs_node_t* initrd_finddir(fs_node_t *node, char* name){
     if (node == initrd_root && !strcmp(name, "dev"))
         return initrd_dev;
-    for (int i = 0; i < file_quantity; i++){
+    for (int i = 0; i < nodes_quantity; i++){
         if (!strcmp(name, root_nodes[i].name))
             return &root_nodes[i];
     }
@@ -45,7 +45,7 @@ static fs_node_t* initrd_finddir(fs_node_t *node, char* name){
 
 fs_node_t* initialize_initrd(u32int locaiton){
     initrd_header = (initrd_header_t *) locaiton;
-    file_header = (initrd_file_header_t *) (locaiton + sizeof(initrd_header_t));
+    file_headers = (initrd_file_header_t *) (locaiton + sizeof(initrd_header_t));
     initrd_root = (fs_node_t*) kmalloc(sizeof(fs_node_t));
     strcpy(initrd_root->name, "/");
     initrd_root->mask = initrd_root->uid = initrd_root->gid = initrd_root->inode = initrd_root->length = 0;
@@ -71,12 +71,12 @@ fs_node_t* initialize_initrd(u32int locaiton){
     initrd_dev->readdir = &initrd_readdir;
     initrd_dev->finddir = &initrd_finddir;
     root_nodes = (fs_node_t *) kmalloc(sizeof(fs_node_t) * initrd_header->file_quantity);
-    file_quantity = initrd_header->file_quantity;
+    nodes_quantity = initrd_header->file_quantity;
     for(int i = 0; i < initrd_header->file_quantity; i++){
-        file_header[i].offset += locaiton;
-        strcpy(root_nodes[i].name, file_header[i].name);
+        file_headers[i].offset += locaiton;
+        strcpy(root_nodes[i].name, file_headers[i].name);
         root_nodes[i].mask = root_nodes[i].gid = root_nodes[i].uid = 0;
-        root_nodes[i].length = file_header[i].length;
+        root_nodes[i].length = file_headers[i].length;
         root_nodes[i].inode = i;
         root_nodes[i].flags = FS_FILE;
         root_nodes[i].read = &initrd_read;

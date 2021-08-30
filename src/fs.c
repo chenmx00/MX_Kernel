@@ -40,4 +40,5 @@ fs_node_t* finddir_fs(fs_node_t* node, char* name){
        return node->finddir(node, name);
     } else {
         return 0;
-    } // open directory
+    } 
+}

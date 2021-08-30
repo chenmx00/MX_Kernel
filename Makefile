@@ -7,8 +7,10 @@ LDFLAGS=-m elf_i386 -T ./src/link.ld
 ASFLAGS=-f elf32
 
 all: $(SOURCES) link
+	 $(shell cp kernel isodir/boot/kernel)
+	 $(shell grub-mkrescue -o mx_kernel.iso isodir)
 clean:
-	-rm ./src/*.o kernel
+	-rm ./src/*.o kernel ./isodir/boot/kernel core.iso
 link:
 	ld $(LDFLAGS) -o kernel $(SOURCES)
 
@@ -21,12 +23,16 @@ CFLAGS=-m32 -nostdlib -nostdinc -fno-builtin -fno-stack-protector
 LDFLAGS=-m elf_i386 -T ./src/link.ld
 ASFLAGS=-f elf32
 
-all: $(SOURCES) link
+all: $(SOURCES) link 
+	 $(shell cp kernel isodir/boot/kernel)
+	 $(shell grub-mkrescue -o core.iso isodir)
+
 clean:
-	-rm ./src/*.o kernel
+	-rm ./src/*.o kernel ./isodir/boot/kernel core.iso
 link:
 	i386-elf-ld $(LDFLAGS) -o kernel $(SOURCES)
 
 .s.o:
 	nasm $(ASFLAGS) $<
 endif
+
